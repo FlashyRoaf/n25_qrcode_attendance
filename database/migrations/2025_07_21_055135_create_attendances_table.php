@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('qrcode');
+            $table->string('shift');
+            $table->string('division');
+            $table->date('date');
+            $table->enum('status', ['present', 'absent', 'late'])->default('present');
+            $table->time('check_in')->nullable();
+            $table->time('check_out')->nullable();
+            $table->string('location')->nullable(); // Optional location field
             $table->timestamps();
         });
     }
