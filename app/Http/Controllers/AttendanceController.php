@@ -23,7 +23,8 @@ class AttendanceController extends Controller
         
         // Logic to display attendance records
         return Inertia::render('qrcode/scanned', [
-            // Pass any necessary data to the view
+            'division' => $qrCode->division,
+            'shift' => $qrCode->shift,
         ]);
     }
 }
