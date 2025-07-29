@@ -124,9 +124,7 @@ const form = useForm({
 
 const props = defineProps<Props>();
 const particles = ref<Particle[]>([]);
-const qrCanvas = ref<HTMLCanvasElement | null>(null);
 const isScanning = ref(false);
-const qrSize = ref(280);
 console.log(props.qrCode);
 
 // Attendance data
