@@ -42,19 +42,9 @@
                 <div class="corner bottom-right"></div>
               </div>
               
-              <!-- QR Code Canvas -->
-              <!-- <canvas 
-                ref="qrCanvas" 
-                class="qr-canvas"
-                :width="qrSize" 
-                :height="qrSize"
-              ></canvas> -->
-
               <div v-html="qrCode">
               </div>
                 
-              
-              
               <!-- Scanning animation overlay -->
               <div class="scan-line" :class="{ 'scanning': isScanning }"></div>
             </div>
@@ -78,6 +68,7 @@
                 </select>
               </div>
             </div>
+
             <div class="instruction-item">
               <div class="step-number">2</div>
               <div class="step-content">
@@ -87,101 +78,20 @@
                 </select>
               </div>
             </div>
-            
-            <!-- <div class="instruction-item">
-              <div class="step-number">2</div>
-              <div class="step-content">
-                <h4>Arahkan ke QR Code</h4>
-                <p>Arahkan kamera ke QR Code di atas</p>
-              </div>
-            </div>
-            
-            <div class="instruction-item">
-              <div class="step-number">3</div>
-              <div class="step-content">
-                <h4>Tap Notifikasi</h4>
-                <p>Ketuk notifikasi yang muncul untuk melakukan absensi</p>
-              </div>
-            </div> -->
 
             <button type="submit" class="submit" :disabled="form.processing">Buat QrCode</button>
           </form>
         </div>
       </section>
-
-      <!-- <section class="status-section fade-in">
-        <div class="status-grid">
-          <div class="status-card">
-            <div class="status-icon">
-              <Users class="icon" />
-            </div>
-            <div class="status-content">
-              <h3>{{ attendanceStats.present }}</h3>
-              <p>Hadir Hari Ini</p>
-            </div>
-          </div>
-          
-          <div class="status-card">
-            <div class="status-icon">
-              <Clock class="icon" />
-            </div>
-            <div class="status-content">
-              <h3>{{ attendanceStats.onTime }}</h3>
-              <p>Tepat Waktu</p>
-            </div>
-          </div>
-          
-          <div class="status-card">
-            <div class="status-icon">
-              <Calendar class="icon" />
-            </div>
-            <div class="status-content">
-              <h3>{{ attendanceStats.totalSessions }}</h3>
-              <p>Total Sesi</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="activity-section fade-in">
-        <h2>Aktivitas Terbaru</h2>
-        <div class="activity-list">
-          <div 
-            v-for="activity in recentActivities" 
-            :key="activity.id" 
-            class="activity-item"
-          >
-            <div class="activity-avatar">
-              {{ getInitials(activity.name) }}
-            </div>
-            <div class="activity-content">
-              <h4>{{ activity.name }}</h4>
-              <p>{{ activity.action }}</p>
-              <span class="activity-time">{{ formatRelativeTime(activity.timestamp) }}</span>
-            </div>
-            <div class="activity-status" :class="activity.status">
-              <div class="status-dot"></div>
-              <span>{{ activity.statusText }}</span>
-            </div>
-          </div>
-        </div>
-      </section> -->
     </main>
-
-    <!-- Footer -->
-    <!-- <footer class="footer">
-      <p>&copy; 2025 25-ji, Nightcord de. | Sistem Absensi Digital</p>
-    </footer> -->
   </div>
 </template>
 
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
-import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { QrCode, Users, Clock, Calendar } from 'lucide-vue-next';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { QrCode } from 'lucide-vue-next';
 import { Division, Shift } from '@/types';
-// import Qrcodevue from 'qrcode.vue';
-// import NavBar from '@/components/NavAccount.vue';
 
 interface Particle {
   id: number;
@@ -199,27 +109,12 @@ interface AttendanceData {
   qrData: string;
 }
 
-interface AttendanceStats {
-  present: number;
-  onTime: number;
-  totalSessions: number;
-}
-
-interface Activity {
-  id: number;
-  name: string;
-  action: string;
-  timestamp: Date;
-  status: 'present' | 'late' | 'absent';
-  statusText: string;
-}
 interface Props {
   shifts: Shift[],
   divisions: Division[],
   qrCode: String,
 }
 
-// Reactive state
 
 const form = useForm({
   shift: '',
@@ -242,47 +137,6 @@ const attendanceData = ref<AttendanceData>({
   qrData: ''
 });
 
-const attendanceStats = ref<AttendanceStats>({
-  present: 12,
-  onTime: 10,
-  totalSessions: 45
-});
-
-const recentActivities = ref<Activity[]>([
-  {
-    id: 1,
-    name: 'Kanade Yoisaki',
-    action: 'Melakukan absensi kehadiran',
-    timestamp: new Date(Date.now() - 2 * 60 * 1000),
-    status: 'present',
-    statusText: 'Hadir'
-  },
-  {
-    id: 2,
-    name: 'Mafuyu Asahina',
-    action: 'Melakukan absensi kehadiran',
-    timestamp: new Date(Date.now() - 5 * 60 * 1000),
-    status: 'present',
-    statusText: 'Hadir'
-  },
-  {
-    id: 3,
-    name: 'Ena Shinonome',
-    action: 'Melakukan absensi kehadiran',
-    timestamp: new Date(Date.now() - 15 * 60 * 1000),
-    status: 'late',
-    statusText: 'Terlambat'
-  },
-  {
-    id: 4,
-    name: 'Mizuki Akiyama',
-    action: 'Melakukan absensi kehadiran',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000),
-    status: 'present',
-    statusText: 'Hadir'
-  }
-]);
-
 // Methods
 const createParticles = () => {
   const particleCount = 25;
@@ -302,58 +156,6 @@ const createParticles = () => {
   particles.value = newParticles;
 };
 
-const generateQRCode = () => {
-  if (!qrCanvas.value) return;
-
-  const canvas = qrCanvas.value;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-
-  // Generate QR data URL with attendance information
-  const qrData = JSON.stringify({
-    sessionId: attendanceData.value.sessionId,
-    sessionName: attendanceData.value.sessionName,
-    timestamp: attendanceData.value.timestamp.toISOString(),
-    url: `${window.location.origin}/attendance/scan/${attendanceData.value.sessionId}`
-  });
-
-  attendanceData.value.qrData = qrData;
-
-  // Simple QR code pattern simulation (in real app, use QR library like qrcode.js)
-  const size = qrSize.value;
-  const moduleSize = Math.floor(size / 25);
-  
-  // Clear canvas
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, size, size);
-  
-  // Create QR pattern
-  ctx.fillStyle = '#000000';
-  
-  // Generate a simple pattern that looks like QR code
-  for (let i = 0; i < 25; i++) {
-    for (let j = 0; j < 25; j++) {
-      // Create a pseudo-random pattern based on session data
-      const shouldFill = (i + j + attendanceData.value.sessionId.charCodeAt(0)) % 3 === 0 ||
-                        (i === 0 || i === 24 || j === 0 || j === 24) ||
-                        (i < 8 && j < 8) || (i < 8 && j > 16) || (i > 16 && j < 8);
-      
-      if (shouldFill) {
-        ctx.fillRect(i * moduleSize, j * moduleSize, moduleSize, moduleSize);
-      }
-    }
-  }
-
-  // Add N25 logo in center
-  ctx.fillStyle = '#9d4edd';
-  ctx.fillRect(10 * moduleSize, 10 * moduleSize, 5 * moduleSize, 5 * moduleSize);
-  
-  ctx.fillStyle = '#ffffff';
-  ctx.font = `${moduleSize}px Arial`;
-  ctx.textAlign = 'center';
-  ctx.fillText('N25', 12.5 * moduleSize, 13 * moduleSize);
-};
-
 const startScanning = () => {
   isScanning.value = true;
   setTimeout(() => {
@@ -369,30 +171,6 @@ const formatTime = (date: Date): string => {
     hour: '2-digit',
     minute: '2-digit'
   });
-};
-
-const formatRelativeTime = (date: Date): string => {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const minutes = Math.floor(diff / 60000);
-  
-  if (minutes < 1) return 'Baru saja';
-  if (minutes < 60) return `${minutes} menit yang lalu`;
-  
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} jam yang lalu`;
-  
-  const days = Math.floor(hours / 24);
-  return `${days} hari yang lalu`;
-};
-
-const getInitials = (name: string): string => {
-  return name
-    .split(' ')
-    .map(word => word[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
 };
 
 const submit = () => {
@@ -412,20 +190,11 @@ const submit = () => {
 // Lifecycle hooks
 onMounted(() => {
   createParticles();
-  generateQRCode();
   
-  // Auto refresh QR code every 5 minutes
-  const refreshInterval = setInterval(() => {
-    attendanceData.value.timestamp = new Date();
-    attendanceData.value.sessionId = 'N25-' + Date.now().toString(36);
-    generateQRCode();
-  }, 5 * 60 * 1000);
-
   // Start scanning animation every 10 seconds
   const scanInterval = setInterval(startScanning, 10000);
 
   onUnmounted(() => {
-    clearInterval(refreshInterval);
     clearInterval(scanInterval);
   });
 });
