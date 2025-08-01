@@ -5,13 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Qrcode;
 use App\Models\Shift;
+use App\Models\Notice;
+use App\Notifications\TelegramNotif;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Inertia\Inertia;
 
 class AttendanceController extends Controller
 {
+    use Notifiable;
     //
     public function index($token)
     {
@@ -70,6 +75,17 @@ class AttendanceController extends Controller
                 'check_in' => Carbon::now(),
                 'status' => $status,
             ]);
+
+            if (Carbon::now()->diffInMinutes(Shift::where('name', $qrCode->shift)->first()->start_time) < -30) {
+                $notice = new Notice([
+                    'title' => $user->name . ' Terlambat (' . intval(Carbon::now()->diffInMinutes(Shift::where('name', $qrCode->shift)->first()->start_time, true)) . ' menit)',
+                    'content' => Carbon::now(),
+                    'link' => 'https://youtube.com',
+                    'telegramid' => Config::get('services.telegram_id'),
+                ]);
+                $notice->save();
+                $notice->notify(new TelegramNotif());
+            }
 
         }
         
